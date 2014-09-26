@@ -35,7 +35,7 @@ start nitrogen-service
 cd ..
 
 # Start the admin app 
-git clone https://github.com/ivanjudson/admin.git
+git clone https://github.com/nitrogenjs/admin.git
 cd admin
 npm install -g yo grunt-cli bower
 npm install
