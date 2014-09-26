@@ -35,11 +35,11 @@ export NITROGEN_KEY="NitrogenPrivateKey.key"
 echo "done."
 
 # Save settings
-echo export NITROGEN_VM_NAME="$NITROGEN_VM_NAME" > bash.settings
-echo export AZURE_SUBSCRIPTION_ID="$AZURE_SUBSCRIPTION_ID" >> bash.settings
-echo export AZURE_MANAGEMENT_CERT="$AZURE_MANAGEMENT_CERT" >> bash.settings
-echo export NITROGEN_KEY="$NITROGEN_KEY" >> bash.settings
-echo export NITROGEN_CERT="$NITROGEN_CERT" >> bash.settings
+echo "export NITROGEN_VM_NAME=\"$NITROGEN_VM_NAME\"" > bash.settings
+echo "export AZURE_SUBSCRIPTION_ID=\"$AZURE_SUBSCRIPTION_ID\"" >> bash.settings
+echo "export AZURE_MANAGEMENT_CERT=\"$AZURE_MANAGEMENT_CERT\"" >> bash.settings
+echo "export NITROGEN_KEY=\"$NITROGEN_KEY\"" >> bash.settings
+echo "export NITROGEN_CERT=\"$NITROGEN_CERT\"" >> bash.settings
 
 # Build the vm
 echo "Provisioning..."
