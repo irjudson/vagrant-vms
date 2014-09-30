@@ -2,57 +2,11 @@
 # vi: set ft=ruby 
 require 'etc'
 
-$install = <<SCRIPT
-# Disable ipv6
-echo "net.ipv6.conf.all.disable_ipv6 = 1" >> /etc/sysctl.conf
-echo "net.ipv6.conf.default.disable_ipv6 = 1" >> /etc/sysctl.conf
-echo "net.ipv6.conf.lo.disable_ipv6 = 1" >> /etc/sysctl.conf
-sysctl -p 
-
-# Update/upgrade
-sudo apt-get update
-sudo apt-get upgrade
-
-# Get linux packages needed for Nitrogen
-sudo apt-get install -yyq git emacs build-essential mongodb-server redis-server ruby1.9.1-dev libffi-dev
-
-# Manage node installation on ubuntu
-sudo apt-get --purge remove node nodejs
-sudo apt-get install -yyq nodejs
-sudo update-alternatives --install /usr/bin/node node /usr/bin/nodejs 10
-sudo apt-get install -yyq npm
-
-# Make a directory for nitrogen
-mkdir nitrogen
-cd nitrogen
-
-# Start the service
-git clone https://github.com/nitrogenjs/service.git
-cd service
-sudo npm install
-cp /vagrant/nitrogen-service.conf /etc/init/nitrogen-service.conf
-start nitrogen-service
-cd ..
-
-# Start the admin app 
-git clone https://github.com/nitrogenjs/admin.git
-cd admin
-npm install -g yo grunt-cli bower
-npm install
-bower --allow-root install
-gem install compass
-cp /vagrant/nitrogen-admin.conf /etc/init/nitrogen-admin.conf
-# This is because xdg-open is a pain in the neck
-cat Gruntfile.js | sed -e "s/localhost/0.0.0.0/" | sed -e "s/'open',//" > /tmp/Gruntfile.js
-cp /tmp/Gruntfile.js ./Gruntfile.js
-start nitrogen-admin
-cd ..
-
-SCRIPT
-
 $azure_install = <<SCRIPT
 hostname $1
 echo HOST_NAME=\\"$1\\" >> /etc/environment
+echo ADMIN_API_KEY=\\"admin\\" >> /etc/environment
+echo ADMIN_REDIRECT_ROOT=\\"http://$1:9000\\" >> /etc/environment
 SCRIPT
 
 # Vagrantfile API/syntax version. Don't touch unless you know what you're doing!
@@ -104,18 +58,13 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # Azure:
   config.vm.provider :azure do |azure, override|
     override.vm.box = "azure"
-    override.ssh.username = 'vagrant'
-    override.ssh.password = 'V8gr@nt'
-    override.vm.synced_folder ".", "/vagrant", type: "rsync", rsync__exclude: [".vagrant/", ".git/", ".gitignore", "*.pem", "*.key", "*.cert"]
-    admin_name = "#{ENV['NITROGEN_VM_NAME']}.cloudapp.net"
-    override.vm.post_up_message = "Open a browser to http://#{admin_name}:9000/ to get started."
     azure.mgmt_certificate = ENV['AZURE_MANAGEMENT_CERT']
     azure.mgmt_endpoint = 'https://management.core.windows.net'
     azure.subscription_id = ENV['AZURE_SUBSCRIPTION_ID']
     azure.vm_image = 'b39f27a8b8c64d52b05eac6a62ebad85__Ubuntu-14_04_1-LTS-amd64-server-20140909-en-us-30GB'
     azure.vm_size = "Medium"
-    azure.vm_user = config.ssh.username
-    azure.vm_password = config.ssh.password 
+    azure.vm_user = 'vagrant'
+    azure.vm_password = 'V8gr@nt'
     azure.vm_name = ENV['NITROGEN_VM_NAME']
     azure.cloud_service_name = azure.vm_name
     azure.deployment_name = "deployment-0"
@@ -124,8 +73,14 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     azure.ssh_certificate_file = ENV['NITROGEN_CERT']
     azure.ssh_port = '22'
     azure.tcp_endpoints = '3030,9000'
-    override.vm.provision :shell, :inline => $azure_install, :args => admin_name
+    override.vm.synced_folder ".", "/vagrant", type: "rsync", rsync__exclude: [".vagrant/", ".git/", ".gitignore", "*.pem", "*.key", "*.cert"]
+    override.vm.post_up_message = "Open a browser to http://#{ENV['NITROGEN_VM_NAME']}.cloudapp.net:9000/ to get started."
+    override.vm.provision :shell, :inline => $azure_install, :args => "#{ENV['NITROGEN_VM_NAME']}.cloudapp.net"
   end
+  config.ssh.username = 'vagrant'
+  config.ssh.password = 'V8gr@nt'
+
   # Provision (install software) on the machine
-  config.vm.provision :shell, :inline => $install
+  config.vm.provision :shell, :path => "install.sh"
+  config.vm.provision :shell, :path => "nitrogen.sh"
 end
