@@ -28,6 +28,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.network "forwarded_port", guest: 3030, host: 3030
   config.vm.network "forwarded_port", guest: 9000, host: 9000
 
+  # SSH configuration
+  # config.ssh.username = 'vagrant'
+  # config.ssh.password = 'V8gr@nt'
+
   # Share an additional folder to the guest VM. The first argument is
   # the path on the host to the actual folder. The second argument is
   # the path on the guest to mount the folder. And the optional third
@@ -50,6 +54,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     override.vm.box_url = "https://vagrantcloud.com/parallels/ubuntu-14.04"
     # Bug in parallels provider https://github.com/Parallels/vagrant-parallels/issues/124
     override.vm.synced_folder "./", "/vagrant", id: "some_id"
+    #parallels.customize ["set", :id, "--on-window-close",  "keep-running"]
   end
 
   # Where to go to get started
@@ -77,8 +82,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     override.vm.post_up_message = "Open a browser to http://#{ENV['NITROGEN_VM_NAME']}.cloudapp.net:9000/ to get started."
     override.vm.provision :shell, :inline => $azure_install, :args => "#{ENV['NITROGEN_VM_NAME']}.cloudapp.net"
   end
-  config.ssh.username = 'vagrant'
-  config.ssh.password = 'V8gr@nt'
 
   # Provision (install software) on the machine
   config.vm.provision :shell, :path => "install.sh"
