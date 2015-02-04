@@ -4,12 +4,36 @@
 mkdir nitrogen
 cd nitrogen
 
-# Start the service
-git clone https://github.com/nitrogenjs/service.git
-cd service
+# Start the registry
+git clone https://github.com/nitrogenjs/registry.git
+cd registry
 sudo npm install
-cp /vagrant/nitrogen-service.conf /etc/init/nitrogen-service.conf
-#start nitrogen-service
+cp /vagrant/nitrogen-registry.conf /etc/init/nitrogen-registry.conf
+#start nitrogen-registry
+cd ..
+
+# Start the front door
+git clone https://github.com/nitrogenjs/frontdoor.git
+cd frontdoor
+sudo npm install
+cp /vagrant/nitrogen-frontdoor.conf /etc/init/nitrogen-frontdoor.conf
+#start nitrogen-frontdoor
+cd ..
+
+# Start the ingestion
+git clone https://github.com/nitrogenjs/ingestion.git
+cd ingestion
+sudo npm install
+cp /vagrant/nitrogen-ingestion.conf /etc/init/nitrogen-ingestion.conf
+#start nitrogen-ingestion
+cd ..
+
+# Start the service
+git clone https://github.com/nitrogenjs/consumption.git
+cd consumption
+sudo npm install
+cp /vagrant/nitrogen-consumption.conf /etc/init/nitrogen-consumption.conf
+#start nitrogen-consumption
 cd ..
 
 # Start the admin app 
