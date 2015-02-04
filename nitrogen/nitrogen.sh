@@ -9,7 +9,7 @@ git clone https://github.com/nitrogenjs/registry.git
 cd registry
 sudo npm install
 cp /vagrant/nitrogen-registry.conf /etc/init/nitrogen-registry.conf
-#start nitrogen-registry
+start nitrogen-registry
 cd ..
 
 # Start the front door
@@ -17,7 +17,7 @@ git clone https://github.com/nitrogenjs/frontdoor.git
 cd frontdoor
 sudo npm install
 cp /vagrant/nitrogen-frontdoor.conf /etc/init/nitrogen-frontdoor.conf
-#start nitrogen-frontdoor
+start nitrogen-frontdoor
 cd ..
 
 # Start the ingestion
@@ -25,7 +25,7 @@ git clone https://github.com/nitrogenjs/ingestion.git
 cd ingestion
 sudo npm install
 cp /vagrant/nitrogen-ingestion.conf /etc/init/nitrogen-ingestion.conf
-#start nitrogen-ingestion
+start nitrogen-ingestion
 cd ..
 
 # Start the service
@@ -33,7 +33,7 @@ git clone https://github.com/nitrogenjs/consumption.git
 cd consumption
 sudo npm install
 cp /vagrant/nitrogen-consumption.conf /etc/init/nitrogen-consumption.conf
-#start nitrogen-consumption
+start nitrogen-consumption
 cd ..
 
 # Start the admin app 
@@ -53,5 +53,5 @@ if [ "`hostname -d`" = "cloudapp.net" ]; then
   cat app/scripts/app.js | sed -e "s/localhost/$HOST_NAME/" > /tmp/app.js
   cp /tmp/app.js app/scripts/app.js
 fi
-#start nitrogen-admin
+start nitrogen-admin
 cd ..
