@@ -4,7 +4,7 @@
 mkdir nitrogen
 cd nitrogen
 
-# Start the service
+# Get and configure the nitrogen service
 git clone https://github.com/nitrogenjs/service.git
 cd service
 sudo npm install
@@ -12,7 +12,7 @@ cp /vagrant/nitrogen-service.conf /etc/init/nitrogen-service.conf
 #start nitrogen-service
 cd ..
 
-# Start the admin app 
+# Get and configure the nitrogen admin app 
 git clone https://github.com/nitrogenjs/admin.git
 cd admin
 npm install -g yo grunt-cli bower
@@ -31,3 +31,9 @@ if [ "`hostname -d`" = "cloudapp.net" ]; then
 fi
 #start nitrogen-admin
 cd ..
+
+# Get and configure the nitrogen mqtt-gateway  
+git clone https://github.com/nitrogenjs/mqtt.git
+cd mqtt
+npm install
+cp /vagrant/nitrogen-mqtt.conf /etc/init/nitrogen-mqtt.conf

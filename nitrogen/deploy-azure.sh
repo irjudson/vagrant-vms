@@ -13,7 +13,7 @@ if [ "x$1" = "x" ]; then
 	read MACHINE_NAME
 	export NITROGEN_VM_NAME="$MACHINE_NAME"
 else
-	export NITROGEN_VM_NAME="$0"
+	export NITROGEN_VM_NAME="$1"
 fi
 
 # Subscription
@@ -34,17 +34,23 @@ export NITROGEN_CERT="NitrogenCert.pem"
 export NITROGEN_KEY="NitrogenPrivateKey.key"
 echo "done."
 
+# Get nitrogen apikey
+export NITROGEN_API_KEY="`n2 apikeys ls | grep 'User' | awk '{ print $1 }'`"
+if [ "$NITROGEN_API_KEY" = "" ]; then
+	echo "You don't appear to be logged in to nitrogen. You should login to nitrogen using the command: "
+	echo "> n2 user login <email>"
+	echo "Then rerun this command."
+	exit -1 
+fi
+
 # Save settings
 echo "export NITROGEN_VM_NAME=\"$NITROGEN_VM_NAME\"" > bash.settings
 echo "export AZURE_SUBSCRIPTION_ID=\"$AZURE_SUBSCRIPTION_ID\"" >> bash.settings
 echo "export AZURE_MANAGEMENT_CERT=\"$AZURE_MANAGEMENT_CERT\"" >> bash.settings
 echo "export NITROGEN_KEY=\"$NITROGEN_KEY\"" >> bash.settings
 echo "export NITROGEN_CERT=\"$NITROGEN_CERT\"" >> bash.settings
+echo "export NITROGEN_API_KEY=\"$NITROGEN_API_KEY\"" >> bash.settings
 
-# Build the vm
-echo "Provisioning..."
-vagrant up --provider azure
-echo -n "done."
-
-# Inform the user
-echo "To use the azure created vm, run . bash.settings before you issue any vagrant commands."
+echo "To provision your nitrogen machines please execute the following commands:"
+echo "> . bash.settings"
+echo "> vagrant up --provider azure --provision"

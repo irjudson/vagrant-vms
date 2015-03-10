@@ -18,3 +18,6 @@ sudo apt-get --purge remove node nodejs
 sudo apt-get install -yyq nodejs
 sudo update-alternatives --install /usr/bin/node node /usr/bin/nodejs 10
 sudo apt-get install -yyq npm
+
+# Install nitrogen command line, it makes things easier
+sudo npm install -g nitrogen-cli

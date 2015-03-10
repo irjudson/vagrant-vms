@@ -4,10 +4,8 @@ require 'etc'
 
 $azure_install = <<SCRIPT
 hostname $1
-echo HOST_NAME=\\"$1\\" >> /etc/environment
 echo MQTT_HOST_NAME=\\"$1\\" >> /etc/environment
-echo ADMIN_API_KEY=\\"admin\\" >> /etc/environment
-echo ADMIN_REDIRECT_ROOT=\\"http://$1:9000\\" >> /etc/environment
+echo API_KEY=\\"$2\\" >> /etc/environment
 SCRIPT
 
 # Vagrantfile API/syntax version. Don't touch unless you know what you're doing!
@@ -26,12 +24,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # Create a forwarded port mapping which allows access to a specific port
   # within the machine from a port on the host machine. In the example below,
   # accessing "localhost:8080" will access port 80 on the guest machine.
-  config.vm.network "forwarded_port", guest: 3030, host: 3030
-  config.vm.network "forwarded_port", guest: 9000, host: 9000
-
-  # SSH configuration
-  config.ssh.username = 'vagrant'
-  config.ssh.password = 'V8gr@nt'
+  config.vm.network "forwarded_port", guest: 1883, host: 1883
 
   # Share an additional folder to the guest VM. The first argument is
   # the path on the host to the actual folder. The second argument is
@@ -54,9 +47,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     override.vm.box = "parallels/ubuntu-14.04"
     override.vm.box_url = "https://vagrantcloud.com/parallels/ubuntu-14.04"
     # Bug in parallels provider https://github.com/Parallels/vagrant-parallels/issues/124
-    override.vm.synced_folder "./", "/vagrant", id: "some_id"
-    #parallels.customize ["set", :id, "--on-window-close",  "keep-running"]
+    override.vm.synced_folder ".", "/vagrant", id: "some_id"
   end
+
+  config.ssh.username = 'vagrant'
+  config.ssh.password = 'V8gr@nt'
 
   # Where to go to get started
   config.vm.post_up_message = "Open a browser to http://localhost:9000/ to get started."
@@ -74,17 +69,17 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     azure.vm_name = ENV['NITROGEN_VM_NAME']
     azure.cloud_service_name = azure.vm_name
     azure.deployment_name = "deployment-0"
-    azure.vm_location = 'West US'
+    azure.vm_location = 'East US 2'
     azure.ssh_private_key_file = ENV['NITROGEN_KEY']
     azure.ssh_certificate_file = ENV['NITROGEN_CERT']
     azure.ssh_port = '22'
-    azure.tcp_endpoints = '3030,9000'
+    azure.tcp_endpoints = '1883'
     override.vm.synced_folder ".", "/vagrant", type: "rsync", rsync__exclude: [".vagrant/", ".git/", ".gitignore", "*.pem", "*.key", "*.cert"]
     override.vm.post_up_message = "Open a browser to http://#{ENV['NITROGEN_VM_NAME']}.cloudapp.net:9000/ to get started."
-    override.vm.provision :shell, :inline => $azure_install, :args => "#{ENV['NITROGEN_VM_NAME']}.cloudapp.net"
+    override.vm.provision :shell, :inline => $azure_install, :args => ["#{ENV['NITROGEN_VM_NAME']}.cloudapp.net", "#{ENV['NITROGEN_API_KEY']}"]
   end
 
   # Provision (install software) on the machine
-  config.vm.provision :shell, :path => "install.sh"
+  config.vm.provision :shell, :path => "../../install.sh"
   config.vm.provision :shell, :path => "nitrogen.sh"
 end
