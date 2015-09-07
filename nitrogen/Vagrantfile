@@ -31,7 +31,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   # SSH configuration
   config.ssh.username = 'vagrant'
-  config.ssh.password = 'V8gr@nt'
+  # config.ssh.password = 'V8gr@nt'
+  # config.ssh.insert_key = true
+  # config.ssh.private_key_path = ENV['NITROGEN_KEY'] || 'NitrogenPrivateKey.key'
 
   # Share an additional folder to the guest VM. The first argument is
   # the path on the host to the actual folder. The second argument is
@@ -75,8 +77,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     azure.cloud_service_name = azure.vm_name
     azure.deployment_name = "deployment-0"
     azure.vm_location = 'West US'
-    azure.ssh_private_key_file = ENV['NITROGEN_KEY']
-    azure.ssh_certificate_file = ENV['NITROGEN_CERT']
+    azure.ssh_private_key_file = ENV['NITROGEN_KEY'] || 'NitrogenPrivateKey.key'
+    azure.ssh_certificate_file = ENV['NITROGEN_CERT'] || 'NitrogenCert.pem'
     azure.ssh_port = '22'
     azure.tcp_endpoints = '3030,9000'
     override.vm.synced_folder ".", "/vagrant", type: "rsync", rsync__exclude: [".vagrant/", ".git/", ".gitignore", "*.pem", "*.key", "*.cert"]

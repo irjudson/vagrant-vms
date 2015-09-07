@@ -4,7 +4,9 @@
 mkdir nitrogen
 cd nitrogen
 
-# Start the registry
+npm install -g yo grunt-cli bower
+
+# Start the registry service
 git clone https://github.com/nitrogenjs/registry.git
 cd registry
 sudo npm install
@@ -12,28 +14,12 @@ cp /vagrant/nitrogen-registry.conf /etc/init/nitrogen-registry.conf
 start nitrogen-registry
 cd ..
 
-# Start the front door
-git clone https://github.com/nitrogenjs/frontdoor.git
-cd frontdoor
+# Start the messaging service
+git clone https://github.com/nitrogenjs/messaging.git
+cd messaging
 sudo npm install
-cp /vagrant/nitrogen-frontdoor.conf /etc/init/nitrogen-frontdoor.conf
-start nitrogen-frontdoor
-cd ..
-
-# Start the ingestion
-git clone https://github.com/nitrogenjs/ingestion.git
-cd ingestion
-sudo npm install
-cp /vagrant/nitrogen-ingestion.conf /etc/init/nitrogen-ingestion.conf
-start nitrogen-ingestion
-cd ..
-
-# Start the consumption
-git clone https://github.com/nitrogenjs/consumption.git
-cd consumption
-sudo npm install
-cp /vagrant/nitrogen-consumption.conf /etc/init/nitrogen-consumption.conf
-start nitrogen-consumption
+cp /vagrant/nitrogen-messaging.conf /etc/init/nitrogen-messaging.conf
+start nitrogen-messaging
 cd ..
 
 # Get and configure the nitrogen mqtt-gateway  
@@ -43,13 +29,22 @@ npm install
 cp /vagrant/nitrogen-mqtt.conf /etc/init/nitrogen-mqtt.conf
 cd ..
 
-# Get and configure the nitrogen admin app 
-git clone https://github.com/nitrogenjs/admin.git
-cd admin
-npm install -g yo grunt-cli bower
+# Get the client lib and configure it so admin can use it
+git clone https://github.com/irjudson/client.git
+cd client
 npm install
 bower --allow-root install
-gem install compass
+scripts/build-module
+cd ..
+
+# Get and configure the nitrogen admin app 
+git clone https://github.com/irjudson/admin.git
+cd admin
+npm install
+bower --allow-root install
+cp ../client/browser/nitrogen-min.js app/
+cat app/index.html | sed -e 's%https://api.nitrogen.io/client/%%' > /tmp/index.html
+cp /tmp/index.html app/index.html 
 cp /vagrant/nitrogen-admin.conf /etc/init/nitrogen-admin.conf
 
 # This is because xdg-open is a pain in the neck

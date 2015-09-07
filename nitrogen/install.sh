@@ -11,13 +11,18 @@ sudo apt-get update
 sudo apt-get upgrade
 
 # Get linux packages needed for Nitrogen
-sudo apt-get install -yyq git emacs build-essential mongodb-server redis-server ruby1.9.1-dev libffi-dev
+sudo apt-get install -yyq git emacs build-essential mongodb-server redis-server ruby1.9.1-dev libffi-dev curl xdg-utils lynx
+
+# Node install on ubuntu
+# per: https://nodesource.com/blog/nodejs-v012-iojs-and-the-nodesource-linux-repositories
+curl -sL https://deb.nodesource.com/setup_0.12 | sudo bash -
+sudo apt-get install -y nodejs
 
 # Manage node installation on ubuntu
-sudo apt-get --purge remove node nodejs
-sudo apt-get install -yyq nodejs
-sudo update-alternatives --install /usr/bin/node node /usr/bin/nodejs 10
-sudo apt-get install -yyq npm
+#sudo apt-get --purge remove node nodejs
+#sudo apt-get install -yyq nodejs
+#sudo update-alternatives --install /usr/bin/node node /usr/bin/nodejs 10
+#sudo apt-get install -yyq npm
 
 # Install nitrogen command line, it makes things easier
 sudo npm install -g nitrogen-cli
