@@ -48,12 +48,16 @@ cp /tmp/index.html app/index.html
 cp /vagrant/nitrogen-admin.conf /etc/init/nitrogen-admin.conf
 
 # This is because xdg-open is a pain in the neck
-cat Gruntfile.js | sed -e "s/localhost/0.0.0.0/" | sed -e "s/'open',//" > /tmp/Gruntfile.js
-cp /tmp/Gruntfile.js ./Gruntfile.js
 if [ "`hostname -d`" = "cloudapp.net" ]; then
   . /etc/environment
   cat app/scripts/app.js | sed -e "s/localhost/$HOST_NAME/" > /tmp/app.js
   cp /tmp/app.js app/scripts/app.js
+  cat Gruntfile.js | sed -e "s/localhost/$HOST_NAME/" | sed -e "s/'open',//" > /tmp/Gruntfile.js
+  cp /tmp/Gruntfile.js ./Gruntfile.js
+else
+  cat Gruntfile.js | sed -e "s/localhost/0.0.0.0/" | sed -e "s/'open',//" > /tmp/Gruntfile.js
+  cp /tmp/Gruntfile.js ./Gruntfile.js
 fi
+
 start nitrogen-admin
 cd ..

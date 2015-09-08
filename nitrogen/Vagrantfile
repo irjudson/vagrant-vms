@@ -78,7 +78,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     azure.deployment_name = "deployment-0"
     azure.vm_location = 'West US'
     azure.ssh_private_key_file = ENV['NITROGEN_KEY'] || 'NitrogenPrivateKey.key'
-    azure.ssh_certificate_file = ENV['NITROGEN_CERT'] || 'NitrogenCert.pem'
     azure.ssh_port = '22'
     azure.tcp_endpoints = '3030,9000'
     override.vm.synced_folder ".", "/vagrant", type: "rsync", rsync__exclude: [".vagrant/", ".git/", ".gitignore", "*.pem", "*.key", "*.cert"]
