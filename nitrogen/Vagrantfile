@@ -3,11 +3,18 @@
 require 'etc'
 
 $azure_install = <<SCRIPT
-hostname $1
-echo HOST_NAME=\\"$1\\" >> /etc/environment
-echo MQTT_HOST_NAME=\\"$1\\" >> /etc/environment
-echo ADMIN_API_KEY=\\"admin\\" >> /etc/environment
-echo ADMIN_REDIRECT_ROOT=\\"http://$1:9000\\" >> /etc/environment
+  hostname $1
+  echo HOST_NAME=\\"$1\\" >> /etc/environment
+  echo MQTT_HOST_NAME=\\"$1\\" >> /etc/environment
+  echo ADMIN_API_KEY=\\"admin\\" >> /etc/environment
+  echo ADMIN_REDIRECT_ROOT=\\"http://$1:9000\\" >> /etc/environment
+SCRIPT
+
+$fix_nitrogen = <<SCRIPT
+  cat /home/vagrant/nitrogen/registry/config.js | sed -e "s%http://localhost:9000%http://$1:9000%" > /tmp/config.js
+  cp /tmp/config.js /home/vagrant/nitrogen/registry/config.js
+  cat /home/vagrant/nitrogen/messaging/config.js | sed -e "s%http://localhost:9000%http://$1:9000%" > /tmp/config.js
+  cp /tmp/config.js /home/vagrant/nitrogen/messaging/config.js
 SCRIPT
 
 # Vagrantfile API/syntax version. Don't touch unless you know what you're doing!
@@ -28,7 +35,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # accessing "localhost:8080" will access port 80 on the guest machine.
   config.vm.network "forwarded_port", guest: 3030, host: 3030
   config.vm.network "forwarded_port", guest: 9000, host: 9000
-
+  config.vm.network "forwarded_port", guest: 35729, host: 35729
+  
   # SSH configuration
   config.ssh.username = 'vagrant'
   # config.ssh.password = 'V8gr@nt'
@@ -70,19 +78,20 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     azure.mgmt_endpoint = 'https://management.core.windows.net'
     azure.subscription_id = ENV['AZURE_SUBSCRIPTION_ID']
     azure.vm_image = 'b39f27a8b8c64d52b05eac6a62ebad85__Ubuntu-14_04_1-LTS-amd64-server-20140909-en-us-30GB'
+    azure.vm_image = 'b39f27a8b8c64d52b05eac6a62ebad85__Ubuntu_DAILY_BUILD-trusty-14_04_3-LTS-amd64-server-20150908-en-us-30GB'
     azure.vm_size = "Medium"
     azure.vm_user = 'vagrant'
-    azure.vm_password = 'V8gr@nt'
     azure.vm_name = ENV['NITROGEN_VM_NAME']
     azure.cloud_service_name = azure.vm_name
     azure.deployment_name = "deployment-0"
     azure.vm_location = 'West US'
     azure.ssh_private_key_file = ENV['NITROGEN_KEY'] || 'NitrogenPrivateKey.key'
     azure.ssh_port = '22'
-    azure.tcp_endpoints = '3030,9000'
+    azure.tcp_endpoints = '3030,9000,35729'
     override.vm.synced_folder ".", "/vagrant", type: "rsync", rsync__exclude: [".vagrant/", ".git/", ".gitignore", "*.pem", "*.key", "*.cert"]
     override.vm.post_up_message = "Open a browser to http://#{ENV['NITROGEN_VM_NAME']}.cloudapp.net:9000/ to get started."
     override.vm.provision :shell, :inline => $azure_install, :args => "#{ENV['NITROGEN_VM_NAME']}.cloudapp.net"
+    override.vm.provision :shell, :inline => $fix_nitrogen, :args =>  "#{ENV['NITROGEN_VM_NAME']}.cloudapp.net"
   end
 
   # Provision (install software) on the machine

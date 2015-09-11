@@ -18,11 +18,5 @@ sudo apt-get install -yyq git emacs build-essential mongodb-server redis-server 
 curl -sL https://deb.nodesource.com/setup_0.12 | sudo bash -
 sudo apt-get install -y nodejs
 
-# Manage node installation on ubuntu
-#sudo apt-get --purge remove node nodejs
-#sudo apt-get install -yyq nodejs
-#sudo update-alternatives --install /usr/bin/node node /usr/bin/nodejs 10
-#sudo apt-get install -yyq npm
-
 # Install nitrogen command line, it makes things easier
 sudo npm install -g nitrogen-cli
