@@ -7,14 +7,14 @@ cd nitrogen
 npm install -g yo grunt-cli bower
 
 # Install the registry service
-git clone https://github.com/nitrogenjs/registry.git
+git clone https://github.com/irjudson/registry.git
 cd registry
 npm install
 cp /vagrant/nitrogen-registry.conf /etc/init/nitrogen-registry.conf
 cd ..
 
 # Install the messaging service
-git clone https://github.com/nitrogenjs/messaging.git
+git clone https://github.com/irjudson/messaging.git
 cd messaging
 npm install
 cp /vagrant/nitrogen-messaging.conf /etc/init/nitrogen-messaging.conf
@@ -41,8 +41,8 @@ cd admin
 npm install
 bower --allow-root install
 cp ../client/browser/nitrogen-min.js app/
-cat app/index.html | sed -e 's%https://api.nitrogen.io/client/%%' > /tmp/index.html
-cp /tmp/index.html app/index.html 
+#cat app/index.html | sed -e 's%https://api.nitrogen.io/client/%%' > /tmp/index.html
+#cp /tmp/index.html app/index.html 
 cp /vagrant/nitrogen-admin.conf /etc/init/nitrogen-admin.conf
 cd ..
 

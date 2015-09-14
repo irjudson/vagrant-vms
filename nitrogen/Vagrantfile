@@ -34,9 +34,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # within the machine from a port on the host machine. In the example below,
   # accessing "localhost:8080" will access port 80 on the guest machine.
   config.vm.network "forwarded_port", guest: 3030, host: 3030
+  config.vm.network "forwarded_port", guest: 3031, host: 3031
   config.vm.network "forwarded_port", guest: 9000, host: 9000
   config.vm.network "forwarded_port", guest: 35729, host: 35729
-  
+
   # SSH configuration
   config.ssh.username = 'vagrant'
   # config.ssh.password = 'V8gr@nt'
