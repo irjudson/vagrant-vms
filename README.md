@@ -1,3 +1,5 @@
+> **Historical Project** — These Vagrant configurations were used for workshops and development environments prior to Docker becoming the dominant tool for this use case.
+
 vagrant-vms
 ===========
 
